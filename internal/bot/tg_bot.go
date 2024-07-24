@@ -1,65 +1,27 @@
 package bot
 
-import (
-	"encoding/xml"
-	"fmt"
-	"io"
-	"os"
+import "sync"
 
-	"github.com/c0de4un/go-flower-shop/internal/logging"
-)
-
-type TelegramConfig struct {
-	XMLName xml.Name `xml:"TelegramConfig"`
-
-	Token string `xml:"Token"`
+type TelegramBot struct {
+	config *TelegramConfig
 }
 
-func LoadTGConfig(filePath string) (*TelegramConfig, error) {
-	logging.GetLogger().Debug(fmt.Sprintf("TelegramConfig::LoadTGConfig: reading %s", filePath))
+var (
+	telegramBotInstance *TelegramBot
+	telegramBotSync     sync.Once
+)
 
-	f, err := os.Open(filePath)
-	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("TelegramConfig::LoadTGConfig: %v", err))
-
-		return nil, err
-	}
-	defer f.Close()
-	decoder := xml.NewDecoder(f)
-
-	cfg := &TelegramConfig{
-		Token: "",
-	}
-
-	for {
-		token, err := decoder.Token()
-		if err == io.EOF {
-			break
+func InitTelegramBot(config *TelegramConfig) {
+	telegramBotSync.Do(func() {
+		telegramBotInstance = &TelegramBot{
+			config: config,
 		}
+	})
+}
 
-		if err != nil {
-			logging.GetLogger().Error(fmt.Sprintf("TelegramConfig::LoadTGConfig: %v", err))
+func TerminateTelegramBot() {
+}
 
-			return nil, err
-		}
-		if token == nil {
-			break
-		}
-
-		switch tokenType := token.(type) {
-		case xml.StartElement:
-			if tokenType.Name.Local == "TelegramConfig" {
-				err = decoder.DecodeElement(&cfg, &tokenType)
-				if err != nil {
-					logging.GetLogger().Error(fmt.Sprintf("TelegramConfig::LoadTGConfig: %v", err))
-
-					return nil, err
-				}
-
-				break
-			}
-		}
-	}
-
-	return cfg, nil
+func GetTelegramBot() *TelegramBot {
+	return telegramBotInstance
 }
