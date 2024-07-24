@@ -12,7 +12,8 @@ import (
 type TelegramConfig struct {
 	XMLName xml.Name `xml:"TelegramConfig"`
 
-	Token string `xml:"Token"`
+	Token  string `xml:"Token"`
+	AppUrl string `xml:"AppUrl"`
 }
 
 func LoadTGConfig(filePath string) (*TelegramConfig, error) {
@@ -28,7 +29,8 @@ func LoadTGConfig(filePath string) (*TelegramConfig, error) {
 	decoder := xml.NewDecoder(f)
 
 	cfg := &TelegramConfig{
-		Token: "",
+		Token:  "",
+		AppUrl: "",
 	}
 
 	for {

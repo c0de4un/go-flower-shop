@@ -76,7 +76,22 @@ func (b *TelegramBot) start() {
 
 	// Register new handler with match on command `/start`
 	bh.HandleMessage(func(bot *telego.Bot, message telego.Message) {
-		bot.SendMessage(tu.Message(message.Chat.ChatID(), "Hello"))
+
+		keyboard := tu.Keyboard(
+			tu.KeyboardRow(
+				tu.KeyboardButton("Catalog").WithWebApp(
+					&telego.WebAppInfo{
+						URL: b.config.AppUrl,
+					},
+				),
+			),
+		)
+
+		msg := tu.Message(message.Chat.ChatID(), "Welcome !").
+			WithReplyMarkup(keyboard).
+			WithProtectContent()
+
+		bot.SendMessage(msg)
 	}, th.CommandEqual("start"))
 
 	// Start handling updates
