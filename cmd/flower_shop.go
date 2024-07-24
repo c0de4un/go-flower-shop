@@ -10,7 +10,7 @@ import (
 func main() {
 	logging.InitializeLogger()
 
-	botCfg, err := bot.LoadTGConfig("configs/tg.xml")
+	botCfg, err := bot.LoadTGConfig("config/tg.xml")
 	if err != nil {
 		panic(fmt.Sprintf("failed to load tg config: %v\n", err))
 	}
