@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TelegramConfig>
+    <Token>telegram_api_token</Token>
+</TelegramConfig>
